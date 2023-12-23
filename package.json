@@ -1,13 +1,14 @@
 {
-  "name": "Marca de agua - AstroPeliculasOficial",
-  "version": "0.2.0",
-  "description": "Una aplicación en Express, simple para marcar imágenes con agua usando jimp, para @AstroPeliculasOf en Telegram.",
+  "name": "Watermark-AstroPeliculasOficial",
+  "version": "0.4.4",
+  "description": "An application in Express, simple to mark images with water using jimp, for @AstroPeliculasOf",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "jimp": "^0.16.1"
+    "jimp": "^0.16.1",
+    "sharp": "^0.28.3"
   }
 }
