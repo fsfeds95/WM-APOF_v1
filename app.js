@@ -1,70 +1,89 @@
+// Importamos las bibliotecas necesarias
 const express = require('express');
 const Jimp = require('jimp');
 
+// Creamos la aplicación Express
 const app = express();
-const port = 8225;
 
-// Ruta "/b" para reescalar la imagen y agregar marca de agua
-app.get('/b', async (req, res) => {
-  // Verificar si se proporcionó un enlace
+// Configuramos el puerto
+const PORT = 8225;
+
+// Configuramos las rutas
+app.get('/p', (req, res) => {
+  // Verificamos si se proporcionó un enlace
   if (!req.query.url) {
-    res.send('¡Se requiere un enlace de imagen!');
-    return;
+    return res.send('¡Advertencia! Por favor, proporciona un enlace de imagen.');
   }
+  
+  // Cargamos la imagen y aplicamos el escalado y la marca de agua
+  Jimp.read(req.query.url)
+    .then(image => {
+      // Escalado de imagen
+      image.scaleToFit(720, 1080);
 
-  try {
-    const image = await Jimp.read(req.query.url);
-    
-    // Reescalar la imagen a 1279x720
-    image.resize(1279, 720);
+      // Agregamos la marca de agua con opacidad 0.25
+      Jimp.read('wm-poster_v2.png')
+        .then(watermark => {
+          watermark.opacity(0.25);
+          image.composite(watermark, 0, 0, {
+            mode: Jimp.BLEND_SCREEN,
+            opacitySource: 0.5,
+            opacityDest: 1,
+          });
 
-    // Agregar marca de agua con opacidad 1
-    const watermark = await Jimp.read('wm-backdrop_v3.png');
-    image.composite(watermark, 0, 0, { mode: Jimp.BLEND_SOURCE_OVER, opacityDest: 1 });
-
-    // Guardar la imagen en formato JPEG con calidad 95%
-    const outputPath = 'WM-AstroPeliculasOf.jpg';
-    await image.quality(95).writeAsync(outputPath);
-
-    // Descargar la imagen en el navegador
-    res.download(outputPath);
-  } catch (error) {
-    console.error(error);
-    res.send('Hubo un error al procesar la imagen');
-  }
+          // Generamos el archivo JPEG
+          image.quality(95).write('WM-AstroPeliculasOf.jpg');
+          res.type('jpeg').sendFile('WM-AstroPeliculasOf.jpg');
+        })
+        .catch(error => {
+          console.log('Error al cargar la marca de agua:', error);
+          res.send('¡Ocurrió un error al procesar la imagen!');
+        });
+    })
+    .catch(error => {
+      console.log('Error al cargar la imagen:', error);
+      res.send('¡Ocurrió un error al cargar la imagen!');
+    });
 });
 
-// Ruta "/p" para reescalar la imagen, agregar marca de agua y cambiar la opacidad
-app.get('/p', async (req, res) => {
-  // Verificar si se proporcionó un enlace
+app.get('/b', (req, res) => {
+  // Verificamos si se proporcionó un enlace
   if (!req.query.url) {
-    res.send('¡Se requiere un enlace de imagen!');
-    return;
+    return res.send('¡Advertencia! Por favor, proporciona un enlace de imagen.');
   }
+  
+  // Cargamos la imagen y aplicamos el escalado y la marca de agua
+  Jimp.read(req.query.url)
+    .then(image => {
+      // Escalado de imagen
+      image.scaleToFit(1280, 720);
 
-  try {
-    const image = await Jimp.read(req.query.url);
-    
-    // Reescalar la imagen a 720x1080
-    image.resize(720, 1080);
+      // Agregamos la marca de agua con opacidad 1
+      Jimp.read('wm-backdrop_v3.png')
+        .then(watermark => {
+          watermark.opacity(1);
+          image.composite(watermark, 0, 0, {
+            mode: Jimp.BLEND_SCREEN,
+            opacitySource: 0.5,
+            opacityDest: 1,
+          });
 
-    // Agregar marca de agua con opacidad 0.25
-    const watermark = await Jimp.read('wm-poster_v2.png');
-    image.composite(watermark, 0, 0, { mode: Jimp.BLEND_SOURCE_OVER, opacityDest: 0.25 });
-
-    // Guardar la imagen en formato JPEG con calidad 95%
-    const outputPath = 'WM-AstroPeliculasOf.jpg';
-    await image.quality(95).writeAsync(outputPath);
-
-    // Descargar la imagen en el navegador
-    res.download(outputPath);
-  } catch (error) {
-    console.error(error);
-    res.send('Hubo un error al procesar la imagen');
-  }
+          // Generamos el archivo JPEG
+          image.quality(95).write('WM-AstroPeliculasOf.jpg');
+          res.type('jpeg').sendFile('WM-AstroPeliculasOf.jpg');
+        })
+        .catch(error => {
+          console.log('Error al cargar la marca de agua:', error);
+          res.send('¡Ocurrió un error al procesar la imagen!');
+        });
+    })
+    .catch(error => {
+      console.log('Error al cargar la imagen:', error);
+      res.send('¡Ocurrió un error al cargar la imagen!');
+    });
 });
 
-// Iniciar el servidor en el puerto especificado
-app.listen(port, () => {
-  console.log(`Servidor iniciado en http://localhost:${port}`);
+// Iniciamos el servidor
+app.listen(PORT, () => {
+  console.log(`La aplicación está en funcionamiento en http://localhost:${PORT}`);
 });
