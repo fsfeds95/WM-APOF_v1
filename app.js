@@ -66,17 +66,17 @@ app.get('/b', async (req, res) => {
   // Se descarga la imagen del enlace.
   const image = await jimp.read(url);
 
-  // Se reescala la imagen a una resolución de 1280px por 720px.
-  image.resize(1280, 720);
+  // Se reescala la imagen a una resolución de 1279px por 720px.
+  image.resize(1279, 720);
 
   // Se carga la imagen de la marca de agua.
   const watermark = await jimp.read('wm-backdrop_v2.png');
 
-  // Se reescala la marca de agua a un tamaño de 1280px por 720px.
-  watermark.resize(1280, 720);
+  // Se reescala la marca de agua a un tamaño de 1279px por 720px.
+  watermark.resize(1279, 720);
 
   // Se establece la opacidad de la marca de agua.
-  watermark.opacity(0.6);
+  watermark.opacity(0.25);
 
   // Se combina la imagen con la marca de agua.
   image.composite(watermark, 0, 0);
