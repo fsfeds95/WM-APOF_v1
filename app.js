@@ -31,8 +31,8 @@ app.get('/p', async (req, res) => {
     const outputImage = path.join(__dirname, 'WM-AstroPeliculasOf.jpg');
     await image.quality(95).writeAsync(outputImage);
 
-    // Mostrar la imagen en el navegador
-    res.type('jpeg').sendFile(outputImage);
+    // Descargar la imagen con marca de agua
+    res.download(outputImage, 'WM-AstroPeliculasOf.jpg');
   } catch (error) {
     console.error(error);
     res.status(500).send('¡Ha ocurrido un error al procesar la imagen!');
@@ -63,8 +63,8 @@ app.get('/b', async (req, res) => {
     const outputImage = path.join(__dirname, 'WM-AstroPeliculasOf.jpg');
     await image.quality(95).writeAsync(outputImage);
 
-    // Mostrar la imagen en el navegador
-    res.type('jpeg').sendFile(outputImage);
+    // Descargar la imagen con marca de agua
+    res.download(outputImage, 'WM-AstroPeliculasOf.jpg');
   } catch (error) {
     console.error(error);
     res.status(500).send('¡Ha ocurrido un error al procesar la imagen!');
