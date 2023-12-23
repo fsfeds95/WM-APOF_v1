@@ -70,13 +70,13 @@ app.get('/b', async (req, res) => {
   image.resize(1279, 720);
 
   // Se carga la imagen de la marca de agua.
-  const watermark = await jimp.read('wm-backdrop_v2.png');
+  const watermark = await jimp.read('wm-backdrop_v3.png');
 
   // Se reescala la marca de agua a un tamaño de 1279px por 720px.
   watermark.resize(1279, 720);
 
   // Se establece la opacidad de la marca de agua.
-  watermark.opacity(0.25);
+  watermark.opacity(1);
 
   // Se combina la imagen con la marca de agua.
   image.composite(watermark, 0, 0);
