@@ -31,7 +31,7 @@ app.get('/p', async (req, res) => {
   image.resize(720, 1080);
 
   // Se carga la imagen de la marca de agua.
-  const watermark = await jimp.read('watermarkPoster.png');
+  const watermark = await jimp.read('wm-poster_v1.png');
 
   // Se reescala la marca de agua a un tamaño de 720px por 1280px.
   watermark.resize(720, 1080);
@@ -70,7 +70,7 @@ app.get('/b', async (req, res) => {
   image.resize(1280, 720);
 
   // Se carga la imagen de la marca de agua.
-  const watermark = await jimp.read('wm-backdrop.png');
+  const watermark = await jimp.read('wm-backdrop_v2.png');
 
   // Se reescala la marca de agua a un tamaño de 1280px por 720px.
   watermark.resize(1280, 720);
