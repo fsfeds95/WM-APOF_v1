@@ -1,75 +1,79 @@
-// Importar las bibliotecas necesarias
+// Importar las bibliotecas
 const express = require('express');
-const Jimp = require('jimp');
 const path = require('path');
+const jimp = require('jimp');
+const { renameSync } = require('vfile-rename');
 
-// Crear una instancia de Express
 const app = express();
+const PORT = 8225;
 
-// Escuchar las rutas "/p" y "/b" en Express
+// Ruta para /p
 app.get('/p', async (req, res) => {
-  // Obtener la URL de la imagen del query
-  const url = req.query.url;
+  const imageUrl = req.query.url;
 
-  // Verificar si se proporcionó una URL
-  if (!url) {
-    return res.send('¡Advertencia! Debes proporcionar una URL de imagen.');
+  // Verificar si se suministró un enlace
+  if (!imageUrl) {
+    return res.status(400).send('Debes proporcionar un enlace de imagen');
   }
 
   try {
-    // Cargar la imagen y la marca de agua con Jimp
-    const image = await Jimp.read(url);
-    const watermark = await Jimp.read(path.join(__dirname, 'wm-poster_v2.png'));
+    // Escalar la imagen a 720px x 1080px
+    const image = await jimp.read(imageUrl);
+    image.resize(720, 1080);
 
-    // Escalar la imagen a un tamaño de 720x1080 y añadir la marca de agua con una opacidad de 0.25
-    image.resize(720, 1080).composite(watermark, 0, 0, {
-      mode: Jimp.BLEND_MULTIPLY,
-      opacitySource: 0.25,
-    });
+    // Agregar marca de agua con opacidad 0.25
+    const watermark = await jimp.read('wm-poster_v2.png');
+    image.composite(watermark, 0, 0, { mode: jimp.BLEND_SOURCE_OVER, opacityDest: 0.25 });
 
-    // Convertir la imagen con marca de agua a base64
-    const base64Image = await image.getBase64Async(Jimp.MIME_JPEG);
+    // Guardar la imagen con marca de agua
+    const outputFileName = 'poster_WM_AstroPeliculasOf.jpg';
+    await image.quality(95).writeAsync(outputFileName);
 
-    // Mostrar la imagen en el navegador
-    res.send(`<img src="data:${Jimp.MIME_JPEG};base64,${base64Image}" alt="Imagen con marca de agua">`);
+    // Renombrar el archivo usando vfile-rename
+    renameSync(outputFileName, { basename: 'WM-AstroPeliculasOf', extname: '.jpg' });
+
+    // Enviar la imagen al navegador
+    res.sendFile(path.resolve(outputFileName));
   } catch (error) {
-    console.error(error);
-    res.status(500).send('¡Ha ocurrido un error al procesar la imagen!');
+    console.error('Error al procesar la imagen:', error);
+    res.status(500).send('Error al procesar la imagen');
   }
 });
 
+// Ruta para /b
 app.get('/b', async (req, res) => {
-  // Obtener la URL de la imagen del query
-  const url = req.query.url;
+  const imageUrl = req.query.url;
 
-  // Verificar si se proporcionó una URL
-  if (!url) {
-    return res.send('¡Advertencia! Debes proporcionar una URL de imagen.');
+  // Verificar si se suministró un enlace
+  if (!imageUrl) {
+    return res.status(400).send('Debes proporcionar un enlace de imagen');
   }
 
   try {
-    // Cargar la imagen y la marca de agua con Jimp
-    const image = await Jimp.read(url);
-    const watermark = await Jimp.read(path.join(__dirname, 'wm-backdrop_v3.png'));
+    // Escalar la imagen a 1280px x 720px
+    const image = await jimp.read(imageUrl);
+    image.resize(1280, 720);
 
-    // Escalar la imagen a un tamaño de 1280x720 y añadir la marca de agua con una opacidad de 1
-    image.resize(1280, 720).composite(watermark, 0, 0, {
-      mode: Jimp.BLEND_MULTIPLY,
-      opacitySource: 1,
-    });
+    // Agregar marca de agua con opacidad 1
+    const watermark = await jimp.read('wm-backdrop_v3.png');
+    image.composite(watermark, 0, 0, { mode: jimp.BLEND_SOURCE_OVER, opacityDest: 1 });
 
-    // Convertir la imagen con marca de agua a base64
-    const base64Image = await image.getBase64Async(Jimp.MIME_JPEG);
+    // Guardar la imagen con marca de agua
+    const outputFileName = 'backdrop_WM_AstroPeliculasOf.jpg';
+    await image.quality(95).writeAsync(outputFileName);
 
-    // Mostrar la imagen en el navegador
-    res.send(`<img src="data:${Jimp.MIME_JPEG};base64,${base64Image}" alt="Imagen con marca de agua">`);
+    // Renombrar el archivo usando vfile-rename
+    renameSync(outputFileName, { basename: 'WM-AstroPeliculasOf', extname: '.jpg' });
+
+    // Enviar la imagen al navegador
+    res.sendFile(path.resolve(outputFileName));
   } catch (error) {
-    console.error(error);
-    res.status(500).send('¡Ha ocurrido un error al procesar la imagen!');
+    console.error('Error al procesar la imagen:', error);
+    res.status(500).send('Error al procesar la imagen');
   }
 });
 
-// Escuchar en el puerto 8225
-app.listen(8225, () => {
-  console.log('La aplicación está escuchando en http://localhost:8225');
+// Iniciar el servidor en el puerto especificado
+app.listen(PORT, () => {
+  console.log(`La aplicación está escuchando en el puerto ${PORT}`);
 });
