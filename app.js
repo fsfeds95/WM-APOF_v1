@@ -34,10 +34,10 @@ app.get('/p', async (req, res) => {
   const watermark = await jimp.read('watermarkPoster.png');
 
   // Se reescala la marca de agua a un tamaño de 720px por 1280px.
-  watermark.resize(720, 1280);
+  watermark.resize(720, 1080);
 
   // Se establece la opacidad de la marca de agua.
-  watermark.opacity(0.5);
+  watermark.opacity(0.25);
 
   // Se combina la imagen con la marca de agua.
   image.composite(watermark, 0, 0);
