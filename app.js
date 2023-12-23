@@ -27,12 +27,11 @@ app.get('/p', async (req, res) => {
       opacitySource: 0.25,
     });
 
-    // Guardar la imagen con marca de agua como un archivo JPEG con calidad del 95%
-    const outputImage = path.join(__dirname, 'WM-AstroPeliculasOf.jpg');
-    await image.quality(95).writeAsync(outputImage);
+    // Convertir la imagen con marca de agua a base64
+    const base64Image = await image.getBase64Async(Jimp.MIME_JPEG);
 
-    // Descargar la imagen con marca de agua
-    res.download(outputImage, 'WM-AstroPeliculasOf.jpg');
+    // Mostrar la imagen en el navegador
+    res.send(`<img src="data:${Jimp.MIME_JPEG};base64,${base64Image}" alt="Imagen con marca de agua">`);
   } catch (error) {
     console.error(error);
     res.status(500).send('¡Ha ocurrido un error al procesar la imagen!');
@@ -59,12 +58,11 @@ app.get('/b', async (req, res) => {
       opacitySource: 1,
     });
 
-    // Guardar la imagen con marca de agua como un archivo JPEG con calidad del 95%
-    const outputImage = path.join(__dirname, 'WM-AstroPeliculasOf.jpg');
-    await image.quality(95).writeAsync(outputImage);
+    // Convertir la imagen con marca de agua a base64
+    const base64Image = await image.getBase64Async(Jimp.MIME_JPEG);
 
-    // Descargar la imagen con marca de agua
-    res.download(outputImage, 'WM-AstroPeliculasOf.jpg');
+    // Mostrar la imagen en el navegador
+    res.send(`<img src="data:${Jimp.MIME_JPEG};base64,${base64Image}" alt="Imagen con marca de agua">`);
   } catch (error) {
     console.error(error);
     res.status(500).send('¡Ha ocurrido un error al procesar la imagen!');
